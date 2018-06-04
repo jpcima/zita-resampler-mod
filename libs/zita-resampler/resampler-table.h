@@ -22,7 +22,11 @@
 #define __RESAMPLER_TABLE_H
 
 
+#if defined(_WIN32)
+#include <windows.h>
+#else
 #include <pthread.h>
+#endif
 
 
 #define ZITA_RESAMPLER_MAJOR_VERSION 1
@@ -39,12 +43,21 @@ private:
 
     friend class Resampler_table;
 
+#if defined(_WIN32)
+    Resampler_mutex (void) { InitializeCriticalSection (&_mutex); }
+    ~Resampler_mutex (void) { DeleteCriticalSection (&_mutex); }
+    void lock (void) { EnterCriticalSection (&_mutex); }
+    void unlock (void) { LeaveCriticalSection (&_mutex); }
+
+    CRITICAL_SECTION  _mutex;
+#else
     Resampler_mutex (void) { pthread_mutex_init (&_mutex, 0); }
     ~Resampler_mutex (void) { pthread_mutex_destroy (&_mutex); }
     void lock (void) { pthread_mutex_lock (&_mutex); }
     void unlock (void) { pthread_mutex_unlock (&_mutex); }
 
     pthread_mutex_t  _mutex;
+#endif
 };
 
 
