@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 project(zita-resampler VERSION "1.6.0" LANGUAGES CXX)
 
 add_library(zita-resampler SHARED
