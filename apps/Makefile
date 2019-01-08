@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------
 #
-#  Copyright (C) 2006-2011 Fons Adriaensen <fons@linuxaudio.org>
+#  Copyright (C) 2006-2018 Fons Adriaensen <fons@linuxaudio.org>
 #    
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -18,15 +18,13 @@
 # ----------------------------------------------------------------------------
 
 
-PREFIX = /usr/local
-SUFFIX := $(shell uname -m | sed -e 's/^unknown/$//' -e 's/^i.86/$//' -e 's/^x86_64/$/64/')
-LIBDIR = lib$(SUFFIX)
-DISTDIR = zresample-$(VERSION)
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
+MANDIR ?= /usr/share/man/man1
+
 VERSION = 1.6.0
-MANDIR = /usr/share/man/man1
-LDFLAGS += -L$(PREFIX)/$(LIBDIR)
 CPPFLAGS += -MMD -MP -DVERSION=\"$(VERSION)\"
-CXXFLAGS += -O3  -ffast-math -Wall
+CXXFLAGS += -O2  -ffast-math -Wall
 CXXFLAGS += -march=native
 
 
@@ -36,7 +34,7 @@ all:	zresample zretune zresample.1.gz zretune.1.gz
 ZRESAMPLE_O = zresample.o audiofile.o dither.o
 zresample:	LDLIBS += -lzita-resampler -lsndfile -lrt
 zresample:	$(ZRESAMPLE_O)
-	g++ $(LDFLAGS) -o $@ $(ZRESAMPLE_O) $(LDLIBS)
+	$(CXX) $(LDFLAGS) -o $@ $(ZRESAMPLE_O) $(LDLIBS)
 $(ZRESAMPLE_O):
 -include $(ZRESAMPLE_O:%.o=%.d)
 
@@ -44,7 +42,7 @@ $(ZRESAMPLE_O):
 ZRETUNE_O = zretune.o audiofile.o dither.o
 zretune:	LDLIBS += -lzita-resampler -lsndfile -lrt
 zretune:	$(ZRETUNE_O)
-	g++ $(LDFLAGS) -o $@ $(ZRETUNE_O) $(LDLIBS)
+	$(CXX) $(LDFLAGS) -o $@ $(ZRETUNE_O) $(LDLIBS)
 $(ZRETUNE_O):
 -include $(ZRETUNE_O:%.o=%.d)
 
@@ -57,14 +55,16 @@ zretune.1.gz:	zretune.1
 
 
 install:	all
-	install -Dm 755 zresample $(DESTDIR)$(PREFIX)/bin/zresample
-	install -Dm 755 zretune $(DESTDIR)$(PREFIX)/bin/zretune
-	install -Dm 644 zresample.1.gz $(DESTDIR)$(MANDIR)/zresample.1.gz
-	install -Dm 644 zretune.1.gz $(DESTDIR)$(MANDIR)/zretune.1.gz
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install -m 755 zresample $(DESTDIR)$(BINDIR)
+	install -m 755 zretune $(DESTDIR)$(BINDIR)
+	install -m 644 zresample.1.gz $(DESTDIR)$(MANDIR)
+	install -m 644 zretune.1.gz $(DESTDIR)$(MANDIR)
 
 uninstall: 
-	/bin/rm -f $(DESTDIR)$(PREFIX)/bin/zresample
-	/bin/rm -f $(DESTDIR)$(PREFIX)/bin/zretune
+	/bin/rm -f $(DESTDIR)$(BINDIR)/zresample
+	/bin/rm -f $(DESTDIR)$(BINDIR)/zretune
 	/bin/rm -f $(MANDIR)/zresample.1.gz
 	/bin/rm -f $(MANDIR)/zretune.1.gz
 
