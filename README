@@ -1,3 +1,21 @@
+Zita-resampler (fork)
+=====================
+
+** Important notice **
+This is a personal fork of Zita-resampler, free software
+created by Fons Adriaensen.
+
+Home page of Zita-resampler:
+https://kokkinizita.linuxaudio.org/linuxaudio/
+
+The contents of this repository diverges in various ways from
+the original source, and possibly does not contain the latest
+updates.
+
+The original text of the README document follows.
+
+----------------------------------------------------------------
+
 Zita-resampler is a C++ library for sample rate conversion of
 audio signals. Full documentation is available in HTML format,
 see the 'docs' directory.
