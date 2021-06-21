@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 //
-//  Copyright (C) 2006-2012 Fons Adriaensen <fons@linuxaudio.org>
+//  Copyright (C) 2006-2020 Fons Adriaensen <fons@linuxaudio.org>
 //    
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #define __RESAMPLER_H
 
 
-#include <zita-resampler/resampler-table.h>
+#include "zita-resampler/resampler-table.h"
 
 
 class Resampler
@@ -55,8 +55,8 @@ public:
     unsigned int         out_count;
     const float         *inp_data;
     float               *out_data;
-    const void          *inp_list;
-    void                *out_list;
+    const float        **inp_list;
+    float              **out_list;
 
 private:
 

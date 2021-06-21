@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 //
-//  Copyright (C) 2006-2012 Fons Adriaensen <fons@linuxaudio.org>
+//  Copyright (C) 2006-2020 Fons Adriaensen <fons@linuxaudio.org>
 //    
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #define __VRESAMPLER_H
 
 
-#include <zita-resampler/resampler-table.h>
+#include "zita-resampler/resampler-table.h"
 
 
 class VResampler
@@ -61,7 +61,7 @@ public:
 
 private:
 
-    enum { NPHASE = 256 };
+    enum { NPHASE = 120 };
 
     Resampler_table     *_table;
     unsigned int         _nchan;

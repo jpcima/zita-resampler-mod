@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------
 #
-#  Copyright (C) 2006-2012 Fons Adriaensen <fons@linuxaudio.org>
+#  Copyright (C) 2006-2020 Fons Adriaensen <fons@linuxaudio.org>
 #    
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -20,17 +20,18 @@
 
 # Modify as required.
 #
-PREFIX = /usr/local
 SUFFIX := $(shell uname -m | sed -e 's/^unknown/$//' -e 's/^i.86/$//' -e 's/^x86_64/$/64/')
-LIBDIR = lib$(SUFFIX)
+PREFIX ?= /usr/local
+INCDIR ?= $(PREFIX)/include
+LIBDIR ?= $(PREFIX)/lib$(SUFFIX)
 
 MAJVERS = 1
-MINVERS = 6.0
+MINVERS = 8.0
 VERSION = $(MAJVERS).$(MINVERS)
 DISTDIR = zita-resampler-$(VERSION)
 
-
 CPPFLAGS += -I. -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS
+CPPFLAGS += -DENABLE_SSE2
 CXXFLAGS += -Wall -fPIC -O2 -ffast-math
 CXXFLAGS += -march=native
 LDFLAGS += 
@@ -47,22 +48,22 @@ ZITA-RESAMPLER_H = zita-resampler/resampler.h zita-resampler/resampler-table.h \
 
 
 $(ZITA-RESAMPLER_MIN): $(ZITA-RESAMPLER_O)
-	g++ -shared $(LDFLAGS) -Wl,-soname,$(ZITA-RESAMPLER_MAJ) -o $(ZITA-RESAMPLER_MIN) $(ZITA-RESAMPLER_O) $(ZITA-RESAMPLER_DEP)
+	$(CXX) -shared $(LDFLAGS) -Wl,-soname,$(ZITA-RESAMPLER_MAJ) -o $(ZITA-RESAMPLER_MIN) $(ZITA-RESAMPLER_O) $(ZITA-RESAMPLER_DEP)
 
 $(ZITA-RESAMPLER_O):	$(ZITA-RESAMPLER_H)
 
 
 install:	$(ZITA-RESAMPLER_MIN)
-	install -d $(DESTDIR)$(PREFIX)/include/zita-resampler
-	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)
-	install -m 644 $(ZITA-RESAMPLER_H) $(DESTDIR)$(PREFIX)/include/zita-resampler
-	install -m 644 $(ZITA-RESAMPLER_MIN) $(DESTDIR)$(PREFIX)/$(LIBDIR)
-	ln -sf $(ZITA-RESAMPLER_MIN) $(DESTDIR)$(PREFIX)/$(LIBDIR)/$(ZITA-RESAMPLER_SO)
+	install -d $(DESTDIR)$(INCDIR)/zita-resampler
+	install -d $(DESTDIR)$(LIBDIR)
+	install -m 644 $(ZITA-RESAMPLER_H)   $(DESTDIR)$(INCDIR)/zita-resampler
+	install -m 755 $(ZITA-RESAMPLER_MIN) $(DESTDIR)$(LIBDIR)
 	ldconfig
+	ln -sf $(ZITA-RESAMPLER_MIN) $(DESTDIR)$(LIBDIR)/$(ZITA-RESAMPLER_SO)
 
 uninstall:
-	/bin/rm -rf $(DESTDIR)$(PREFIX)/include/zita-resampler
-	/bin/rm -rf $(DESTDIR)$(PREFIX)/$(LIBDIR)/libzita-resampler*
+	/bin/rm -rf $(DESTDIR)$(INCDIR)/zita-resampler
+	/bin/rm -rf $(DESTDIR)$(LIBDIR)/libzita-resampler*
 
 clean:
 	/bin/rm -rf *~ *.o *.a *.d *.so.* zita-resampler/*~
